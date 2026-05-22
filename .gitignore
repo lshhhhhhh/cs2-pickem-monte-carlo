@@ -1,0 +1,7 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+data/*_from_hltv.csv
+reports/smoke_test_report.md

@@ -1,0 +1,43 @@
+{
+  "event_name": "IEM Cologne Major 2026 Stage 1",
+  "reward_threshold": 5,
+  "format": {
+    "type": "16-team Swiss",
+    "advance_record": "3 wins",
+    "eliminate_record": "3 losses",
+    "non_decider_match_type": "bo1",
+    "advance_elimination_match_type": "bo3"
+  },
+  "teams": [
+    { "seed": 1, "name": "GamerLegion" },
+    { "seed": 2, "name": "B8" },
+    { "seed": 3, "name": "HEROIC" },
+    { "seed": 4, "name": "BetBoom" },
+    { "seed": 5, "name": "BIG" },
+    { "seed": 6, "name": "M80" },
+    { "seed": 7, "name": "MIBR" },
+    { "seed": 8, "name": "SINNERS" },
+    { "seed": 9, "name": "NRG" },
+    { "seed": 10, "name": "TYLOO" },
+    { "seed": 11, "name": "Sharks" },
+    { "seed": 12, "name": "Gaimin Gladiators" },
+    { "seed": 13, "name": "Liquid" },
+    { "seed": 14, "name": "Lynn Vision" },
+    { "seed": 15, "name": "THUNDER dOWNUNDER" },
+    { "seed": 16, "name": "FlyQuest" }
+  ],
+  "opening_matches": [
+    ["GamerLegion", "NRG"],
+    ["B8", "TYLOO"],
+    ["HEROIC", "Sharks"],
+    ["BetBoom", "Gaimin Gladiators"],
+    ["BIG", "Liquid"],
+    ["M80", "Lynn Vision"],
+    ["MIBR", "THUNDER dOWNUNDER"],
+    ["SINNERS", "FlyQuest"]
+  ],
+  "sources": [
+    "https://www.hltv.org/news/44679/iem-cologne-major-stage-1-opening-matchups-announced",
+    "https://bo3.gg/news/liquid-vs-big-headlines-iem-cologne-2026-opening-round-matchups"
+  ]
+}
