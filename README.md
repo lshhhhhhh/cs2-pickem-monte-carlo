@@ -5,6 +5,21 @@ Monte Carlo optimizer for CS2 Pick'Em Swiss stages.
 Current scope: this repository currently implements **Stage 1 only** for IEM
 Cologne Major 2026. It does not yet model Stage 2, Stage 3, or Playoffs picks.
 
+## Current Stage 1 Result
+
+![IEM Cologne 2026 Stage 1 Pick'Em result](assets/pickem_result_card.png)
+
+Reward target: maximize the chance of getting at least 5 correct Stage 1 picks.
+
+| Pick category | Teams |
+| --- | --- |
+| `3-0` | SINNERS, BIG |
+| `Advance` | GamerLegion, B8, BetBoom, MIBR, Lynn Vision, HEROIC |
+| `0-3` | FlyQuest, THUNDER dOWNUNDER |
+
+Model estimate: `P(hits >= 5) = 66.8%` in two 30,000-simulation convergence
+checks. Full report: [`reports/iem_cologne_2026_stage1_report.md`](reports/iem_cologne_2026_stage1_report.md).
+
 The main objective is the in-game reward threshold, for example "get five
 correct Pick'Em predictions", not simply the highest average number of correct
 picks.
