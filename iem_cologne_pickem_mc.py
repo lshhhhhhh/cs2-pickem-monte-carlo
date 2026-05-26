@@ -437,7 +437,7 @@ def render_markdown_report(
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--event", type=Path, default=Path("data/iem_cologne_2026_stage1.json"))
-    parser.add_argument("--vrs-csv", type=Path, default=Path("data/vrs_2026-05-22.csv"))
+    parser.add_argument("--vrs-csv", type=Path, default=Path("data/vrs_2026-05-26.csv"))
     parser.add_argument("--vrs-url", help="Optional HLTV Valve ranking URL to fetch and convert to CSV before simulation.")
     parser.add_argument("--vrs-html", type=Path, help="Optional saved HLTV Valve ranking HTML/text file to convert to CSV before simulation.")
     parser.add_argument("--write-vrs-csv", type=Path, help="Where to save rows fetched from --vrs-url.")

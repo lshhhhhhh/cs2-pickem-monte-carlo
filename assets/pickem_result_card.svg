@@ -39,8 +39,8 @@
 
   <g transform="translate(1075 85)">
     <rect x="0" y="0" width="360" height="170" rx="8" fill="url(#panel)" stroke="#2b7f4c" stroke-width="2" filter="url(#shadow)"/>
-    <text x="30" y="52" class="small">30k simulation check</text>
-    <text x="30" y="125" class="metric">66.8%</text>
+    <text x="30" y="52" class="small">10k simulation run</text>
+    <text x="30" y="125" class="metric">66.6%</text>
     <text x="245" y="122" class="small">P(5+ hits)</text>
   </g>
 
@@ -51,7 +51,7 @@
     <circle cx="54" cy="156" r="14" fill="url(#accent)"/>
     <text x="90" y="166" class="team">SINNERS</text>
     <circle cx="54" cy="238" r="14" fill="url(#accent)"/>
-    <text x="90" y="248" class="team">BIG</text>
+    <text x="90" y="248" class="team">TYLOO</text>
     <text x="30" y="346" class="note">Lottery slots: upside matters,</text>
     <text x="30" y="378" class="note">but do not burn the safest advances.</text>
   </g>
@@ -85,6 +85,6 @@
   <g transform="translate(96 775)">
     <rect x="0" y="0" width="1408" height="58" rx="8" fill="#07130e" opacity="0.75" stroke="#1f5a35"/>
     <text x="28" y="37" class="mono">github.com/lshhhhhhh/cs2-pickem-monte-carlo</text>
-    <text x="720" y="37" class="note">VRS: 2026-05-22 | Stage 1 only | Model result, not a guarantee</text>
+    <text x="720" y="37" class="note">VRS: 2026-05-26 | Stage 1 only | Model result, not a guarantee</text>
   </g>
 </svg>

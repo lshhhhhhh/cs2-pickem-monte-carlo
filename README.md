@@ -13,12 +13,12 @@ Reward target: maximize the chance of getting at least 5 correct Stage 1 picks.
 
 | Pick category | Teams |
 | --- | --- |
-| `3-0` | SINNERS, BIG |
+| `3-0` | SINNERS, TYLOO |
 | `Advance` | GamerLegion, B8, BetBoom, MIBR, Lynn Vision, HEROIC |
 | `0-3` | FlyQuest, THUNDER dOWNUNDER |
 
-Model estimate: `P(hits >= 5) = 66.8%` in two 30,000-simulation convergence
-checks. Full report: [`reports/iem_cologne_2026_stage1_report.md`](reports/iem_cologne_2026_stage1_report.md).
+Model estimate: `P(hits >= 5) = 66.6%` with the 2026-05-26 VRS update. Full
+report: [`reports/iem_cologne_2026_stage1_report.md`](reports/iem_cologne_2026_stage1_report.md).
 
 The main objective is the in-game reward threshold, for example "get five
 correct Pick'Em predictions", not simply the highest average number of correct
@@ -33,7 +33,7 @@ python .\iem_cologne_pickem_mc.py --sims 10000 --report reports\iem_cologne_2026
 The default event is IEM Cologne Major 2026 Stage 1, using:
 
 - `data/iem_cologne_2026_stage1.json`
-- `data/vrs_2026-05-22.csv`
+- `data/vrs_2026-05-26.csv`
 
 ## Updating VRS
 
@@ -95,11 +95,11 @@ Useful options:
 
 ## Simulation Count
 
-For IEM Cologne Major 2026 Stage 1, 10,000 simulations were enough to identify
-the same reward-optimized pick set across several random seeds. Two additional
-30,000-simulation checks with seeds `101` and `102` also returned the same
-recommended picks with `P(hits >= 5) = 66.8%`.
+For IEM Cologne Major 2026 Stage 1, 10,000 simulations are used as the default
+quick iteration count. Earlier 2026-05-22 VRS checks were stable across several
+random seeds, including two 30,000-simulation runs. The current README result
+uses the newer 2026-05-26 VRS snapshot.
 
-This is evidence of practical convergence for the current model, not a formal
-guarantee. Model assumptions and VRS freshness matter more than the remaining
-Monte Carlo sampling error.
+This is evidence of practical stability for the model, not a formal guarantee.
+Model assumptions and VRS freshness matter more than the remaining Monte Carlo
+sampling error.

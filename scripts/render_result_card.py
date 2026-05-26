@@ -46,9 +46,9 @@ def main() -> None:
     text(draw, (98, 204), "Reward-optimized picks: maximize P(at least 5 correct)", 28, "#b9d7c5")
 
     rounded(draw, (1075, 85, 1435, 255), "#123522", "#2b7f4c", 2)
-    text(draw, (1105, 125), "30k simulation check", 24, "#b9d7c5")
-    text(draw, (1105, 166), "66.8%", 78, "#ffffff", True)
-    text(draw, (1107, 226), "P(hits >= 5)", 22, "#b9d7c5")
+    text(draw, (1105, 125), "10k simulation run", 24, "#b9d7c5")
+    text(draw, (1105, 160), "66.6%", 70, "#ffffff", True)
+    text(draw, (1107, 224), "P(hits >= 5)", 22, "#b9d7c5")
 
     panels = [
         ((96, 295, 526, 715), "#0c4f32", "3-0 picks"),
@@ -61,7 +61,7 @@ def main() -> None:
         draw.rounded_rectangle((x1, y1, x2, y1 + 86), radius=14, fill=header)
         text(draw, (x1 + 30, y1 + 26), title, 30, "#f4fff7", True)
 
-    for y, name in [(450, "SINNERS"), (532, "BIG")]:
+    for y, name in [(450, "SINNERS"), (532, "TYLOO")]:
         draw.ellipse((136, y - 14, 164, y + 14), fill="#28e38b")
         text(draw, (186, y - 18), name, 32, "#eafff1", True)
     text(draw, (126, 640), "Lottery slots: upside matters,", 22, "#9db8a8")
@@ -81,7 +81,7 @@ def main() -> None:
 
     rounded(draw, (96, 775, 1504, 833), "#07130e", "#1f5a35", 1)
     text(draw, (124, 792), "github.com/lshhhhhhh/cs2-pickem-monte-carlo", 24, "#c7f7d9", True)
-    text(draw, (795, 795), "VRS: 2026-05-22 | Stage 1 only | Model result, not a guarantee", 22, "#9db8a8")
+    text(draw, (795, 795), "VRS: 2026-05-26 | Stage 1 only | Model result, not a guarantee", 22, "#9db8a8")
 
     OUT.parent.mkdir(parents=True, exist_ok=True)
     img.save(OUT)

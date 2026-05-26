@@ -1,27 +1,24 @@
 # IEM Cologne Major 2026 Stage 1 Pick'Em Report
 
-This report covers Stage 1 only. It does not include Stage 2, Stage 3, or
-Playoffs Pick'Em predictions.
-
 ## Summary
 
 - Simulations: 10,000
 - Reward target: at least 5 correct picks
 - VRS logistic scale: 400
 - Random seed: 20260522
-- Reward-optimized success probability: 66.1%
-- Reward-optimized expected hits: 4.971 / 10
+- Reward-optimized success probability: 66.6%
+- Reward-optimized expected hits: 4.968 / 10
 
 ## Recommended Picks
 
-- 3-0: SINNERS, BIG
-- Advance: GamerLegion, B8, BetBoom, MIBR, Lynn Vision, HEROIC
+- 3-0: SINNERS, TYLOO
+- Advance: GamerLegion, B8, MIBR, BetBoom, Lynn Vision, HEROIC
 - 0-3: FlyQuest, THUNDER dOWNUNDER
 
 ## Reference: Expected-Hit Optimizer
 
-- Expected hits: 4.986 / 10
-- Probability of reward threshold: 65.6%
+- Expected hits: 5.005 / 10
+- Probability of reward threshold: 66.4%
 
 - 3-0: BIG, SINNERS
 - Advance: GamerLegion, B8, HEROIC, BetBoom, MIBR, Lynn Vision
@@ -31,35 +28,25 @@ Playoffs Pick'Em predictions.
 
 | Team | VRS Rank | Points | P(3-0) | P(Advance) | P(0-3) |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| GamerLegion | 11 | 1739 | 34.2% | 88.4% | 1.9% |
-| B8 | 16 | 1608 | 19.7% | 74.3% | 4.6% |
-| BetBoom | 18 | 1575 | 21.7% | 73.0% | 4.6% |
-| MIBR | 19 | 1545 | 23.8% | 71.8% | 4.2% |
-| Lynn Vision | 25 | 1438 | 15.0% | 58.4% | 7.4% |
-| HEROIC | 23 | 1469 | 12.7% | 58.2% | 8.2% |
-| SINNERS | 28 | 1391 | 13.0% | 51.9% | 8.4% |
-| BIG | 26 | 1422 | 11.1% | 50.8% | 10.6% |
-| M80 | 29 | 1389 | 9.0% | 46.4% | 13.3% |
-| TYLOO | 27 | 1391 | 9.1% | 45.9% | 13.5% |
-| Liquid | 36 | 1327 | 8.2% | 39.8% | 13.9% |
-| Sharks | 43 | 1296 | 6.2% | 35.7% | 17.1% |
-| Gaimin Gladiators | 47 | 1285 | 5.2% | 32.4% | 19.9% |
-| NRG | 42 | 1296 | 4.1% | 30.1% | 23.4% |
-| THUNDER dOWNUNDER | 56 | 1222 | 4.2% | 26.1% | 21.9% |
-| FlyQuest | 74 | 1135 | 2.7% | 16.7% | 27.0% |
+| GamerLegion | 11 | 1726 | 34.7% | 88.7% | 1.8% |
+| B8 | 16 | 1591 | 18.9% | 73.3% | 4.7% |
+| MIBR | 19 | 1544 | 24.3% | 73.2% | 3.9% |
+| BetBoom | 17 | 1562 | 22.1% | 73.1% | 4.2% |
+| Lynn Vision | 24 | 1442 | 16.1% | 60.8% | 6.7% |
+| HEROIC | 23 | 1447 | 12.0% | 56.9% | 8.5% |
+| SINNERS | 30 | 1382 | 12.8% | 52.1% | 8.1% |
+| BIG | 27 | 1415 | 11.2% | 51.9% | 10.4% |
+| TYLOO | 29 | 1390 | 9.8% | 48.1% | 12.6% |
+| M80 | 31 | 1379 | 9.0% | 46.3% | 13.3% |
+| Liquid | 41 | 1309 | 7.8% | 39.5% | 13.9% |
+| Sharks | 46 | 1282 | 6.3% | 35.7% | 16.8% |
+| NRG | 50 | 1271 | 3.7% | 28.7% | 24.2% |
+| Gaimin Gladiators | 53 | 1237 | 4.3% | 28.2% | 22.7% |
+| THUNDER dOWNUNDER | 57 | 1211 | 4.1% | 26.0% | 22.0% |
+| FlyQuest | 76 | 1130 | 2.9% | 17.7% | 26.4% |
 
 ## Notes
 
 - The reward optimizer maximizes the chance of crossing the Pick'Em reward threshold, not raw average hit count.
 - Swiss pairings after round 1 are approximated inside score groups by Buchholz, with rematches avoided where possible.
 - VRS points are translated into map win probability with a logistic curve; change `--scale` for sensitivity testing.
-
-## Convergence Check
-
-- The 10,000-simulation recommendation was stable across several random seeds.
-- Two additional 30,000-simulation runs with seeds `101` and `102` both returned the same reward-optimized picks:
-  - 3-0: SINNERS, BIG
-  - Advance: GamerLegion, B8, BetBoom, MIBR, Lynn Vision, HEROIC
-  - 0-3: FlyQuest, THUNDER dOWNUNDER
-- Both 30,000-simulation runs estimated `P(hits >= 5)` at 66.8%.
-- This supports practical convergence for the current model, but it is not a formal guarantee.
