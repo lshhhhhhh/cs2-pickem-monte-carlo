@@ -13,11 +13,12 @@ Reward target: maximize the chance of getting at least 5 correct Stage 1 picks.
 
 | Pick category | Teams |
 | --- | --- |
-| `3-0` | SINNERS, TYLOO |
-| `Advance` | GamerLegion, B8, BetBoom, MIBR, Lynn Vision, HEROIC |
+| `3-0` | SINNERS, BIG |
+| `Advance` | GamerLegion, BetBoom, B8, MIBR, Lynn Vision, HEROIC |
 | `0-3` | FlyQuest, THUNDER dOWNUNDER |
 
-Model estimate: `P(hits >= 5) = 66.6%` with the 2026-05-26 VRS update. Full
+Model estimate: `P(hits >= 5) = 67.4%` with the 2026-05-26 VRS update and
+30,000 stored simulations. Full
 report: [`reports/iem_cologne_2026_stage1_report.md`](reports/iem_cologne_2026_stage1_report.md).
 
 The main objective is the in-game reward threshold, for example "get five
@@ -27,7 +28,7 @@ picks.
 ## Quick Start
 
 ```powershell
-python .\iem_cologne_pickem_mc.py --sims 10000 --report reports\iem_cologne_2026_stage1_report.md
+python .\iem_cologne_pickem_mc.py --sims 10000 --exhaustive --report reports\iem_cologne_2026_stage1_report.md
 ```
 
 The default event is IEM Cologne Major 2026 Stage 1, using:
@@ -76,6 +77,27 @@ Then run:
 python .\iem_cologne_pickem_mc.py --event data\future_event.json --vrs-csv data\future_vrs.csv
 ```
 
+## Backtests
+
+Austin Major 2025 Stage 1 uses the same Major Swiss Pick'Em reward shape:
+
+```powershell
+python .\iem_cologne_pickem_mc.py --event data\austin_2025_stage1.json --vrs-csv data\vrs_2025-06-02_austin_stage1.csv --load-sims runs\austin_2025_stage1_vrs_2025-06-02_seed20260522_30000.jsonl --report reports\austin_2025_stage1_backtest_report.md
+python .\scripts\score_pickem.py --event data\austin_2025_stage1.json --three-oh NRG BetBoom --advance HEROIC Complexity TYLOO B8 FlyQuest "Lynn Vision" --zero-three Fluxo Metizport
+```
+
+IEM Cologne 2025 Stage 1 used a different Play-In bracket, so it has a separate
+bracket backtest instead of a `3-0` / `Advance` / `0-3` Pick'Em optimizer:
+
+```powershell
+python .\scripts\backtest_iem_cologne_2025_playin.py
+```
+
+Current sanity checks:
+
+- Austin Major 2025 Stage 1: `6 / 10` Pick'Em hits using the 2025-06-02 VRS snapshot.
+- IEM Cologne 2025 Stage 1 / Play-In: `6 / 8` Stage 2 advancers hit using the 2025-07-07 VRS snapshot.
+
 ## Model Assumptions
 
 - 16-team Swiss stage.
@@ -90,15 +112,18 @@ Useful options:
 - `--scale`: lower values make VRS gaps more decisive. Default: `400`.
 - `--threshold`: reward threshold. Default: `5`.
 - `--candidate-pool`: search breadth for reward optimization. Default: `10`.
+- `--exhaustive`: evaluate every legal Pick'Em combination. For Stage 1 this
+  checks `10,090,080` combinations.
 - `--seed`: random seed for reproducibility.
 - `--report`: write a markdown report.
 
 ## Simulation Count
 
-For IEM Cologne Major 2026 Stage 1, 10,000 simulations are used as the default
-quick iteration count. Earlier 2026-05-22 VRS checks were stable across several
-random seeds, including two 30,000-simulation runs. The current README result
-uses the newer 2026-05-26 VRS snapshot.
+For IEM Cologne Major 2026 Stage 1, the current result uses 30,000 stored
+simulations with the 2026-05-26 VRS snapshot. Exhaustive reward optimization is
+available over all `10,090,080` legal Pick'Em combinations via `--exhaustive`;
+the candidate-pruned search is much faster and has matched the same strategic
+shape in sanity checks.
 
 This is evidence of practical stability for the model, not a formal guarantee.
 Model assumptions and VRS freshness matter more than the remaining Monte Carlo

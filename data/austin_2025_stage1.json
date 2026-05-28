@@ -1,0 +1,62 @@
+{
+  "event_name": "BLAST.tv Austin Major 2025 Stage 1",
+  "reward_threshold": 5,
+  "format": {
+    "type": "16-team Swiss",
+    "advance_record": "3 wins",
+    "eliminate_record": "3 losses",
+    "non_decider_match_type": "bo1",
+    "advance_elimination_match_type": "bo3"
+  },
+  "teams": [
+    { "seed": 1, "name": "Complexity" },
+    { "seed": 2, "name": "HEROIC" },
+    { "seed": 3, "name": "B8" },
+    { "seed": 4, "name": "BetBoom" },
+    { "seed": 5, "name": "TYLOO" },
+    { "seed": 6, "name": "Lynn Vision" },
+    { "seed": 7, "name": "Wildcard" },
+    { "seed": 8, "name": "FlyQuest" },
+    { "seed": 9, "name": "Fluxo" },
+    { "seed": 10, "name": "Metizport" },
+    { "seed": 11, "name": "Legacy" },
+    { "seed": 12, "name": "NRG" },
+    { "seed": 13, "name": "Imperial" },
+    { "seed": 14, "name": "Nemiga" },
+    { "seed": 15, "name": "Chinggis Warriors" },
+    { "seed": 16, "name": "OG" }
+  ],
+  "opening_matches": [
+    ["Complexity", "OG"],
+    ["HEROIC", "Chinggis Warriors"],
+    ["B8", "Imperial"],
+    ["BetBoom", "Nemiga"],
+    ["TYLOO", "NRG"],
+    ["Lynn Vision", "Legacy"],
+    ["Wildcard", "Metizport"],
+    ["FlyQuest", "Fluxo"]
+  ],
+  "actual_records": {
+    "B8": [3, 0],
+    "HEROIC": [3, 0],
+    "BetBoom": [3, 1],
+    "OG": [3, 1],
+    "Nemiga": [3, 1],
+    "Lynn Vision": [3, 2],
+    "Legacy": [3, 2],
+    "TYLOO": [3, 2],
+    "FlyQuest": [2, 3],
+    "NRG": [2, 3],
+    "Wildcard": [2, 3],
+    "Imperial": [1, 3],
+    "Chinggis Warriors": [1, 3],
+    "Complexity": [1, 3],
+    "Metizport": [0, 3],
+    "Fluxo": [0, 3]
+  },
+  "sources": [
+    "https://en.wikipedia.org/wiki/Blast_Austin_Major_2025",
+    "https://liquipedia.net/counterstrike/BLAST/Major/2025/Austin/Stage_1",
+    "https://www.hltv.org/news/41799/blast-austin-major-teams-format-schedule-prizes-talent-fantasy"
+  ]
+}

@@ -114,6 +114,34 @@ def write_vrs_csv(rows: Iterable[tuple[int, str, int]], path: Path) -> None:
             writer.writerow([team, rank, points])
 
 
+def save_simulations(results: list[Result], path: Path, names: list[str]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8") as handle:
+        for wins, losses in results:
+            records = {name: [wins[name], losses[name]] for name in names}
+            handle.write(json.dumps(records, ensure_ascii=False, sort_keys=True) + "\n")
+
+
+def load_simulations(path: Path, names: list[str]) -> list[Result]:
+    name_set = set(names)
+    results: list[Result] = []
+    with path.open("r", encoding="utf-8") as handle:
+        for line_number, line in enumerate(handle, start=1):
+            if not line.strip():
+                continue
+            records = json.loads(line)
+            if set(records) != name_set:
+                missing = sorted(name_set - set(records))
+                extra = sorted(set(records) - name_set)
+                raise SystemExit(f"{path}:{line_number} simulation team mismatch. Missing={missing}, extra={extra}")
+            wins = {name: int(records[name][0]) for name in names}
+            losses = {name: int(records[name][1]) for name in names}
+            results.append((wins, losses))
+    if not results:
+        raise SystemExit(f"No simulations loaded from {path}")
+    return results
+
+
 def logistic(x: float) -> float:
     return 1.0 / (1.0 + math.exp(-x))
 
@@ -274,7 +302,11 @@ def optimize_threshold(
     names: list[str],
     threshold: int,
     candidate_pool: int,
+    exhaustive: bool = False,
 ) -> tuple[float, PickSet, Counter[int]]:
+    if exhaustive:
+        return optimize_threshold_exhaustive(results, names, threshold)
+
     bitsets = build_hit_bitsets(results, names)
     three_candidates = sorted(names, key=lambda name: probs[name].get("3-0", 0.0), reverse=True)[: min(candidate_pool, len(names))]
     zero_candidates = sorted(names, key=lambda name: probs[name].get("0-3", 0.0), reverse=True)[: min(candidate_pool, len(names))]
@@ -298,6 +330,74 @@ def optimize_threshold(
                     best_dist = dist
     assert best_picks is not None
     return best_rate, best_picks, best_dist
+
+
+def optimize_threshold_exhaustive(
+    results: list[Result],
+    names: list[str],
+    threshold: int,
+) -> tuple[float, PickSet, Counter[int]]:
+    try:
+        import numpy as np
+    except ImportError as exc:
+        raise SystemExit("--exhaustive requires numpy.") from exc
+
+    name_to_idx = {name: idx for idx, name in enumerate(names)}
+    sample_count = len(results)
+    team_count = len(names)
+    three_hits = np.zeros((team_count, sample_count), dtype=np.uint8)
+    advance_hits = np.zeros((team_count, sample_count), dtype=np.uint8)
+    zero_hits = np.zeros((team_count, sample_count), dtype=np.uint8)
+
+    for sample_idx, (wins, losses) in enumerate(results):
+        for name in names:
+            idx = name_to_idx[name]
+            three_hits[idx, sample_idx] = int(wins[name] == 3 and losses[name] == 0)
+            advance_hits[idx, sample_idx] = int(wins[name] == 3)
+            zero_hits[idx, sample_idx] = int(wins[name] == 0 and losses[name] == 3)
+
+    advance_combos = list(itertools.combinations(range(team_count), 6))
+    advance_masks = np.array([sum(1 << idx for idx in combo) for combo in advance_combos], dtype=np.uint32)
+    advance_counts = np.empty((len(advance_combos), sample_count), dtype=np.uint8)
+    for combo_idx, combo in enumerate(advance_combos):
+        advance_counts[combo_idx] = advance_hits[list(combo)].sum(axis=0, dtype=np.uint8)
+
+    pair_combos = list(itertools.combinations(range(team_count), 2))
+    pair_masks = np.array([sum(1 << idx for idx in combo) for combo in pair_combos], dtype=np.uint32)
+    three_pair_counts = np.empty((len(pair_combos), sample_count), dtype=np.uint8)
+    zero_pair_counts = np.empty((len(pair_combos), sample_count), dtype=np.uint8)
+    for combo_idx, combo in enumerate(pair_combos):
+        three_pair_counts[combo_idx] = three_hits[list(combo)].sum(axis=0, dtype=np.uint8)
+        zero_pair_counts[combo_idx] = zero_hits[list(combo)].sum(axis=0, dtype=np.uint8)
+
+    best_hits = -1
+    best_picks: PickSet | None = None
+    best_combo_indexes: tuple[int, int, int] | None = None
+
+    for three_idx, three_mask in enumerate(pair_masks):
+        for zero_idx, zero_mask in enumerate(pair_masks):
+            used_mask = int(three_mask | zero_mask)
+            if int(three_mask & zero_mask):
+                continue
+            eligible = np.nonzero((advance_masks & used_mask) == 0)[0]
+            if eligible.size == 0:
+                continue
+            base = three_pair_counts[three_idx] + zero_pair_counts[zero_idx]
+            scores = np.count_nonzero(advance_counts[eligible] + base >= threshold, axis=1)
+            local_pos = int(np.argmax(scores))
+            local_hits = int(scores[local_pos])
+            if local_hits > best_hits:
+                advance_idx = int(eligible[local_pos])
+                best_hits = local_hits
+                best_combo_indexes = (three_idx, advance_idx, zero_idx)
+                best_picks = (
+                    tuple(names[idx] for idx in pair_combos[three_idx]),
+                    tuple(names[idx] for idx in advance_combos[advance_idx]),
+                    tuple(names[idx] for idx in pair_combos[zero_idx]),
+                )
+
+    assert best_picks is not None and best_combo_indexes is not None
+    return best_hits / sample_count, best_picks, hit_distribution(best_picks, results)
 
 
 def format_percent(value: float) -> str:
@@ -326,6 +426,7 @@ def render_output(
     lines: list[str] = [
         f"Event: {event_name}",
         f"Simulations: {args.sims:,} | VRS logistic scale: {args.scale:g} | seed: {args.seed}",
+        f"Reward search: {'exhaustive' if args.exhaustive else 'candidate-pruned'}",
         "",
         "Team probabilities",
         "Team                 Rank  VRS  P(3-0)  P(adv)  P(0-3)  Most common records",
@@ -344,7 +445,7 @@ def render_output(
         )
 
     threshold_rate, threshold_picks, threshold_dist = optimize_threshold(
-        probs, results, names, threshold=args.threshold, candidate_pool=args.candidate_pool
+        probs, results, names, threshold=args.threshold, candidate_pool=args.candidate_pool, exhaustive=args.exhaustive
     )
     expected_hits = sum(hit * count for hit, count in threshold_dist.items()) / args.sims
     lines.extend(picks_lines(f"Reward-optimized picks by P(>={args.threshold} hits): {format_percent(threshold_rate)}", threshold_picks))
@@ -407,6 +508,7 @@ def render_markdown_report(
             f"- Reward target: at least {args.threshold} correct picks",
             f"- VRS logistic scale: {args.scale:g}",
             f"- Random seed: {args.seed}",
+            f"- Reward search: {'exhaustive over all legal combinations' if args.exhaustive else 'candidate-pruned search'}",
             f"- Reward-optimized success probability: {format_percent(threshold_rate).strip()}",
             f"- Reward-optimized expected hits: {threshold_hits:.3f} / 10",
             "",
@@ -446,7 +548,10 @@ def main() -> None:
     parser.add_argument("--scale", type=float, default=400.0, help="Lower values make VRS gaps more decisive.")
     parser.add_argument("--threshold", type=int, default=5)
     parser.add_argument("--candidate-pool", type=int, default=10)
+    parser.add_argument("--exhaustive", action="store_true", help="Search every legal Pick'Em combination instead of candidate pruning.")
     parser.add_argument("--report", type=Path, help="Optional markdown report output path.")
+    parser.add_argument("--save-sims", type=Path, help="Save simulated tournament records as JSONL.")
+    parser.add_argument("--load-sims", type=Path, help="Load simulated tournament records from JSONL instead of generating new simulations.")
     args = parser.parse_args()
 
     if args.vrs_url and args.vrs_html:
@@ -467,9 +572,16 @@ def main() -> None:
     if unknown_matches:
         raise SystemExit(f"Opening matches reference unknown teams: {', '.join(unknown_matches)}")
 
-    rng = random.Random(args.seed)
-    results = [simulate_stage(rng, teams_by_name, opening_matches, args.scale) for _ in range(args.sims)]
-    probs = summarize(results, [team.name for team in teams])
+    names = [team.name for team in teams]
+    if args.load_sims:
+        results = load_simulations(args.load_sims, names)
+        args.sims = len(results)
+    else:
+        rng = random.Random(args.seed)
+        results = [simulate_stage(rng, teams_by_name, opening_matches, args.scale) for _ in range(args.sims)]
+        if args.save_sims:
+            save_simulations(results, args.save_sims, names)
+    probs = summarize(results, names)
     text, report = render_output(event_name, teams, probs, results, args)
     print(text)
 

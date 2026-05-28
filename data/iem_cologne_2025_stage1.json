@@ -1,0 +1,53 @@
+{
+  "event_name": "IEM Cologne 2025 Stage 1 / Play-In",
+  "format": {
+    "type": "16-team double-elimination Play-In",
+    "match_type": "bo3",
+    "advance_slots": 8,
+    "notes": "Four upper-bracket winners advance directly; four lower-bracket crossover winners also advance."
+  },
+  "teams": [
+    { "seed": 1, "name": "FaZe" },
+    { "seed": 2, "name": "BIG" },
+    { "seed": 3, "name": "Liquid" },
+    { "seed": 4, "name": "paiN" },
+    { "seed": 5, "name": "3DMAX" },
+    { "seed": 6, "name": "MIBR" },
+    { "seed": 7, "name": "Ninjas in Pyjamas" },
+    { "seed": 8, "name": "HEROIC" },
+    { "seed": 9, "name": "FlyQuest" },
+    { "seed": 10, "name": "FURIA" },
+    { "seed": 11, "name": "Astralis" },
+    { "seed": 12, "name": "B8" },
+    { "seed": 13, "name": "GamerLegion" },
+    { "seed": 14, "name": "Complexity" },
+    { "seed": 15, "name": "TYLOO" },
+    { "seed": 16, "name": "Virtus.pro" }
+  ],
+  "opening_matches": [
+    ["FaZe", "BIG"],
+    ["Liquid", "paiN"],
+    ["3DMAX", "MIBR"],
+    ["Ninjas in Pyjamas", "HEROIC"],
+    ["FlyQuest", "FURIA"],
+    ["Astralis", "B8"],
+    ["GamerLegion", "Complexity"],
+    ["TYLOO", "Virtus.pro"]
+  ],
+  "actual_advancers": [
+    "FURIA",
+    "FaZe",
+    "Ninjas in Pyjamas",
+    "GamerLegion",
+    "Astralis",
+    "3DMAX",
+    "HEROIC",
+    "Liquid"
+  ],
+  "sources": [
+    "https://www.hltv.org/events/8230/iem-cologne-2025-play-in",
+    "https://www.hltv.org/results?event=8230",
+    "https://www.hltv.org/news/42160/esl-reveals-iem-cologne-brackets",
+    "https://raw.githubusercontent.com/ValveSoftware/counter-strike_regional_standings/main/live/2025/standings_global_2025_07_07.md"
+  ]
+}
