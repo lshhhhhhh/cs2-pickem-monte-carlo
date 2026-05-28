@@ -155,6 +155,18 @@ def win_probability(a: Team, b: Team, bo3: bool, scale: float) -> float:
     return bo3_from_map_prob(p_map) if bo3 else p_map
 
 
+def is_three_oh(wins: int, losses: int) -> bool:
+    return wins == 3 and losses == 0
+
+
+def is_advance_pick(wins: int, losses: int) -> bool:
+    return wins == 3 and losses in (1, 2)
+
+
+def is_zero_three(wins: int, losses: int) -> bool:
+    return wins == 0 and losses == 3
+
+
 def make_pairings(group: list[str], wins: dict[str, int], opponents: dict[str, set[str]], teams: dict[str, Team]) -> list[tuple[str, str]]:
     def buchholz(name: str) -> int:
         return sum(wins[opp] for opp in opponents[name])
@@ -216,6 +228,8 @@ def summarize(results: list[Result], names: list[str]) -> dict[str, dict[str, fl
             summary[name][record] += 1
             if wins[name] == 3:
                 summary[name]["advance"] += 1
+            if is_advance_pick(wins[name], losses[name]):
+                summary[name]["advance_pick"] += 1
             if losses[name] == 3:
                 summary[name]["eliminated"] += 1
     return {name: {key: value / total for key, value in values.items()} for name, values in summary.items()}
@@ -225,7 +239,7 @@ def pick_score(picks: PickSet, probs: dict[str, dict[str, float]]) -> float:
     three_oh, advance, zero_three = picks
     return (
         sum(probs[name].get("3-0", 0.0) for name in three_oh)
-        + sum(probs[name].get("advance", 0.0) for name in advance)
+        + sum(probs[name].get("advance_pick", 0.0) for name in advance)
         + sum(probs[name].get("0-3", 0.0) for name in zero_three)
     )
 
@@ -252,9 +266,9 @@ def hit_distribution(picks: PickSet, results: Iterable[Result]) -> Counter[int]:
     dist: Counter[int] = Counter()
     for wins, losses in results:
         hits = 0
-        hits += sum(1 for name in three_oh if wins[name] == 3 and losses[name] == 0)
-        hits += sum(1 for name in advance if wins[name] == 3)
-        hits += sum(1 for name in zero_three if wins[name] == 0 and losses[name] == 3)
+        hits += sum(1 for name in three_oh if is_three_oh(wins[name], losses[name]))
+        hits += sum(1 for name in advance if is_advance_pick(wins[name], losses[name]))
+        hits += sum(1 for name in zero_three if is_zero_three(wins[name], losses[name]))
         dist[hits] += 1
     return dist
 
@@ -266,9 +280,9 @@ def build_hit_bitsets(results: list[Result], names: list[str]) -> dict[tuple[str
             bits = 0
             for idx, (wins, losses) in enumerate(results):
                 hit = (
-                    (category == "3-0" and wins[name] == 3 and losses[name] == 0)
-                    or (category == "advance" and wins[name] == 3)
-                    or (category == "0-3" and wins[name] == 0 and losses[name] == 3)
+                    (category == "3-0" and is_three_oh(wins[name], losses[name]))
+                    or (category == "advance" and is_advance_pick(wins[name], losses[name]))
+                    or (category == "0-3" and is_zero_three(wins[name], losses[name]))
                 )
                 if hit:
                     bits |= 1 << idx
@@ -310,7 +324,7 @@ def optimize_threshold(
     bitsets = build_hit_bitsets(results, names)
     three_candidates = sorted(names, key=lambda name: probs[name].get("3-0", 0.0), reverse=True)[: min(candidate_pool, len(names))]
     zero_candidates = sorted(names, key=lambda name: probs[name].get("0-3", 0.0), reverse=True)[: min(candidate_pool, len(names))]
-    advance_candidates = sorted(names, key=lambda name: probs[name].get("advance", 0.0), reverse=True)[: min(candidate_pool + 4, len(names))]
+    advance_candidates = sorted(names, key=lambda name: probs[name].get("advance_pick", 0.0), reverse=True)[: min(candidate_pool + 4, len(names))]
 
     best_rate = -1.0
     best_picks: PickSet | None = None
@@ -352,9 +366,9 @@ def optimize_threshold_exhaustive(
     for sample_idx, (wins, losses) in enumerate(results):
         for name in names:
             idx = name_to_idx[name]
-            three_hits[idx, sample_idx] = int(wins[name] == 3 and losses[name] == 0)
-            advance_hits[idx, sample_idx] = int(wins[name] == 3)
-            zero_hits[idx, sample_idx] = int(wins[name] == 0 and losses[name] == 3)
+            three_hits[idx, sample_idx] = int(is_three_oh(wins[name], losses[name]))
+            advance_hits[idx, sample_idx] = int(is_advance_pick(wins[name], losses[name]))
+            zero_hits[idx, sample_idx] = int(is_zero_three(wins[name], losses[name]))
 
     advance_combos = list(itertools.combinations(range(team_count), 6))
     advance_masks = np.array([sum(1 << idx for idx in combo) for combo in advance_combos], dtype=np.uint32)
@@ -429,7 +443,7 @@ def render_output(
         f"Reward search: {'exhaustive' if args.exhaustive else 'candidate-pruned'}",
         "",
         "Team probabilities",
-        "Team                 Rank  VRS  P(3-0)  P(adv)  P(0-3)  Most common records",
+        "Team                 Rank  VRS  P(3-0)  P(3-1/2)  P(0-3)  Most common records",
     ]
     for team in sorted(teams, key=lambda item: probs[item.name].get("advance", 0.0), reverse=True):
         row = probs[team.name]
@@ -441,7 +455,7 @@ def render_output(
         record_text = ", ".join(f"{record} {format_percent(prob).strip()}" for record, prob in records)
         lines.append(
             f"{team.name:20s} {team.vrs_rank:4d} {team.points:4d}  {format_percent(row.get('3-0', 0.0))}"
-            f"  {format_percent(row.get('advance', 0.0))}  {format_percent(row.get('0-3', 0.0))}  {record_text}"
+            f"  {format_percent(row.get('advance_pick', 0.0))}  {format_percent(row.get('0-3', 0.0))}  {record_text}"
         )
 
     threshold_rate, threshold_picks, threshold_dist = optimize_threshold(
@@ -479,14 +493,14 @@ def render_markdown_report(
     threshold_hits = sum(hit * count for hit, count in threshold_dist.items()) / args.sims
     expected_rate = sum(v for k, v in expected_dist.items() if k >= args.threshold) / args.sims
     rows = [
-        "| Team | VRS Rank | Points | P(3-0) | P(Advance) | P(0-3) |",
+        "| Team | VRS Rank | Points | P(3-0) | P(3-1/3-2) | P(0-3) |",
         "| --- | ---: | ---: | ---: | ---: | ---: |",
     ]
     for team in sorted(teams, key=lambda item: probs[item.name].get("advance", 0.0), reverse=True):
         row = probs[team.name]
         rows.append(
             f"| {team.name} | {team.vrs_rank} | {team.points} | {format_percent(row.get('3-0', 0.0)).strip()} | "
-            f"{format_percent(row.get('advance', 0.0)).strip()} | {format_percent(row.get('0-3', 0.0)).strip()} |"
+            f"{format_percent(row.get('advance_pick', 0.0)).strip()} | {format_percent(row.get('0-3', 0.0)).strip()} |"
         )
 
     def pick_block(picks: PickSet) -> str:

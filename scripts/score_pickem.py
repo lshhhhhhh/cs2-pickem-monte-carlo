@@ -25,7 +25,7 @@ def main() -> None:
 
     for name in args.advance:
         wins, losses = records[name]
-        (hits if wins == 3 else misses).append(f"Advance: {name} actual {wins}-{losses}")
+        (hits if wins == 3 and losses in (1, 2) else misses).append(f"Advance: {name} actual {wins}-{losses}")
 
     for name in args.zero_three:
         wins, losses = records[name]

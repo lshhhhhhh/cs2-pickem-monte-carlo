@@ -46,13 +46,13 @@ def main() -> None:
     text(draw, (98, 204), "Reward-optimized picks: maximize P(at least 5 correct)", 28, "#b9d7c5")
 
     rounded(draw, (1075, 85, 1435, 255), "#123522", "#2b7f4c", 2)
-    text(draw, (1105, 125), "10k simulation run", 24, "#b9d7c5")
-    text(draw, (1105, 160), "66.6%", 70, "#ffffff", True)
+    text(draw, (1105, 125), "30k cached simulations", 24, "#b9d7c5")
+    text(draw, (1105, 160), "32.7%", 70, "#ffffff", True)
     text(draw, (1107, 224), "P(hits >= 5)", 22, "#b9d7c5")
 
     panels = [
         ((96, 295, 526, 715), "#0c4f32", "3-0 picks"),
-        ((585, 295, 1105, 715), "#105b3b", "Advance picks"),
+        ((585, 295, 1105, 715), "#105b3b", "3-1 / 3-2 picks"),
         ((1164, 295, 1504, 715), "#713047", "0-3 picks"),
     ]
     for box, header, title in panels:
@@ -61,20 +61,19 @@ def main() -> None:
         draw.rounded_rectangle((x1, y1, x2, y1 + 86), radius=14, fill=header)
         text(draw, (x1 + 30, y1 + 26), title, 30, "#f4fff7", True)
 
-    for y, name in [(450, "SINNERS"), (532, "TYLOO")]:
+    for y, name in [(450, "GamerLegion"), (532, "MIBR")]:
         draw.ellipse((136, y - 14, 164, y + 14), fill="#28e38b")
-        text(draw, (186, y - 18), name, 32, "#eafff1", True)
-    text(draw, (126, 640), "Lottery slots: upside matters,", 22, "#9db8a8")
-    text(draw, (126, 672), "but do not burn the safest advances.", 22, "#9db8a8")
+        text(draw, (186, y - 18), name, 30, "#eafff1", True)
+    text(draw, (126, 640), "Must finish exactly 3-0.", 22, "#9db8a8")
+    text(draw, (126, 672), "This is a separate scoring bucket.", 22, "#9db8a8")
 
-    advance = [("GamerLegion", 615, 420), ("B8", 875, 420), ("BetBoom", 615, 492), ("MIBR", 875, 492), ("Lynn Vision", 615, 564), ("HEROIC", 875, 564)]
+    advance = [("B8", 615, 420), ("BetBoom", 875, 420), ("Lynn Vision", 615, 492), ("HEROIC", 875, 492), ("BIG", 615, 564), ("TYLOO", 875, 564)]
     for name, x, y in advance:
         text(draw, (x, y), name, 32, "#eafff1", True)
-    text(draw, (615, 660), "Stable-score slots: high advancement probability.", 22, "#9db8a8")
+    text(draw, (615, 660), "Only 3-1 or 3-2 counts here.", 22, "#9db8a8")
 
-    for y, name in [(450, "FlyQuest"), (532, "THUNDER"), (572, "dOWNUNDER")]:
-        if y != 572:
-            draw.ellipse((1204, y - 14, 1232, y + 14), fill="#ff5277")
+    for y, name in [(450, "FlyQuest"), (532, "NRG")]:
+        draw.ellipse((1204, y - 14, 1232, y + 14), fill="#ff5277")
         text(draw, (1254, y - 18), name, 32, "#eafff1", True)
     text(draw, (1194, 640), "Chosen for reward threshold,", 22, "#9db8a8")
     text(draw, (1194, 672), "not max average hits.", 22, "#9db8a8")

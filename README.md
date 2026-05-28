@@ -13,11 +13,11 @@ Reward target: maximize the chance of getting at least 5 correct Stage 1 picks.
 
 | Pick category | Teams |
 | --- | --- |
-| `3-0` | SINNERS, BIG |
-| `Advance` | GamerLegion, BetBoom, B8, MIBR, Lynn Vision, HEROIC |
-| `0-3` | FlyQuest, THUNDER dOWNUNDER |
+| `3-0` | GamerLegion, MIBR |
+| `3-1 / 3-2` | B8, BetBoom, Lynn Vision, HEROIC, BIG, TYLOO |
+| `0-3` | FlyQuest, NRG |
 
-Model estimate: `P(hits >= 5) = 67.4%` with the 2026-05-26 VRS update and
+Model estimate: `P(hits >= 5) = 32.7%` with the 2026-05-26 VRS update and
 30,000 stored simulations. Full
 report: [`reports/iem_cologne_2026_stage1_report.md`](reports/iem_cologne_2026_stage1_report.md).
 
@@ -83,7 +83,7 @@ Austin Major 2025 Stage 1 uses the same Major Swiss Pick'Em reward shape:
 
 ```powershell
 python .\iem_cologne_pickem_mc.py --event data\austin_2025_stage1.json --vrs-csv data\vrs_2025-06-02_austin_stage1.csv --load-sims runs\austin_2025_stage1_vrs_2025-06-02_seed20260522_30000.jsonl --report reports\austin_2025_stage1_backtest_report.md
-python .\scripts\score_pickem.py --event data\austin_2025_stage1.json --three-oh NRG BetBoom --advance HEROIC Complexity TYLOO B8 FlyQuest "Lynn Vision" --zero-three Fluxo Metizport
+python .\scripts\score_pickem.py --event data\austin_2025_stage1.json --three-oh HEROIC FlyQuest --advance Complexity TYLOO B8 "Lynn Vision" NRG BetBoom --zero-three Fluxo Metizport
 ```
 
 IEM Cologne 2025 Stage 1 used a different Play-In bracket, so it has a separate
@@ -102,6 +102,7 @@ Current sanity checks:
 
 - 16-team Swiss stage.
 - Teams advance at 3 wins and are eliminated at 3 losses.
+- Pick'Em scoring treats `3-0`, `3-1 / 3-2`, and `0-3` as separate buckets.
 - Round 1 and non-decider matches are Bo1.
 - Advancement and elimination matches are Bo3.
 - Later Swiss rounds are paired inside score groups by Buchholz score, avoiding rematches where possible.
@@ -122,8 +123,9 @@ Useful options:
 For IEM Cologne Major 2026 Stage 1, the current result uses 30,000 stored
 simulations with the 2026-05-26 VRS snapshot. Exhaustive reward optimization is
 available over all `10,090,080` legal Pick'Em combinations via `--exhaustive`;
-the candidate-pruned search is much faster and has matched the same strategic
-shape in sanity checks.
+the candidate-pruned search is much faster. A 10,000-simulation exhaustive
+check matched the same strategic shape after fixing the separate `3-1 / 3-2`
+scoring bucket.
 
 This is evidence of practical stability for the model, not a formal guarantee.
 Model assumptions and VRS freshness matter more than the remaining Monte Carlo
